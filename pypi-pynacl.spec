@@ -22,7 +22,7 @@ Provides: PyNaCl-python
 Provides: PyNaCl-python3
 BuildRequires : cffi
 BuildRequires : llvm
-BuildRequires : pluggy
+BuildRequires : pypi(pluggy)
 BuildRequires : py-python
 BuildRequires : pypi(cffi)
 BuildRequires : pypi(setuptools)
@@ -30,7 +30,7 @@ BuildRequires : pypi(six)
 BuildRequires : pypi(wheel)
 BuildRequires : pytest
 BuildRequires : tox
-BuildRequires : virtualenv
+BuildRequires : pypi(virtualenv)
 
 %description
 ===============================================
