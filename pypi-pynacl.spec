@@ -6,7 +6,7 @@
 #
 Name     : pypi-pynacl
 Version  : 1.4.0
-Release  : 40
+Release  : 41
 URL      : https://files.pythonhosted.org/packages/cf/5a/25aeb636baeceab15c8e57e66b8aa930c011ec1c035f284170cacb05025e/PyNaCl-1.4.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/cf/5a/25aeb636baeceab15c8e57e66b8aa930c011ec1c035f284170cacb05025e/PyNaCl-1.4.0.tar.gz
 Source1  : https://files.pythonhosted.org/packages/cf/5a/25aeb636baeceab15c8e57e66b8aa930c011ec1c035f284170cacb05025e/PyNaCl-1.4.0.tar.gz.asc
@@ -17,20 +17,16 @@ Requires: pypi-pynacl-license = %{version}-%{release}
 Requires: pypi-pynacl-python = %{version}-%{release}
 Requires: pypi-pynacl-python3 = %{version}-%{release}
 BuildRequires : buildreq-distutils3
-Provides: PyNaCl
-Provides: PyNaCl-python
-Provides: PyNaCl-python3
-BuildRequires : cffi
 BuildRequires : llvm
-BuildRequires : pypi(pluggy)
-BuildRequires : py-python
 BuildRequires : pypi(cffi)
+BuildRequires : pypi(py)
 BuildRequires : pypi(setuptools)
 BuildRequires : pypi(six)
 BuildRequires : pypi(wheel)
-BuildRequires : pytest
-BuildRequires : tox
-BuildRequires : pypi(virtualenv)
+BuildRequires : pypi-pluggy
+BuildRequires : pypi-pytest
+BuildRequires : pypi-tox
+BuildRequires : pypi-virtualenv
 
 %description
 ===============================================
@@ -60,7 +56,6 @@ Group: Default
 Requires: python3-core
 Provides: pypi(pynacl)
 Requires: pypi(cffi)
-Requires: pypi(six)
 
 %description python3
 python3 components for the pypi-pynacl package.
@@ -75,7 +70,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1641476715
+export SOURCE_DATE_EPOCH=1641936517
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$FFLAGS -fno-lto "
