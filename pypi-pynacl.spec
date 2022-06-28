@@ -6,13 +6,15 @@
 #
 Name     : pypi-pynacl
 Version  : 1.5.0
-Release  : 42
+Release  : 43
 URL      : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz
 Source1  : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz.asc
 Summary  : Python binding to the Networking and Cryptography (NaCl) library
 Group    : Development/Tools
-License  : Apache-2.0
+License  : Apache-2.0 ISC
+Requires: pypi-pynacl-filemap = %{version}-%{release}
+Requires: pypi-pynacl-lib = %{version}-%{release}
 Requires: pypi-pynacl-license = %{version}-%{release}
 Requires: pypi-pynacl-python = %{version}-%{release}
 Requires: pypi-pynacl-python3 = %{version}-%{release}
@@ -31,6 +33,24 @@ BuildRequires : pypi-virtualenv
 ===============================================
 PyNaCl: Python binding to the libsodium library
 ===============================================
+
+%package filemap
+Summary: filemap components for the pypi-pynacl package.
+Group: Default
+
+%description filemap
+filemap components for the pypi-pynacl package.
+
+
+%package lib
+Summary: lib components for the pypi-pynacl package.
+Group: Libraries
+Requires: pypi-pynacl-license = %{version}-%{release}
+Requires: pypi-pynacl-filemap = %{version}-%{release}
+
+%description lib
+lib components for the pypi-pynacl package.
+
 
 %package license
 Summary: license components for the pypi-pynacl package.
@@ -52,6 +72,7 @@ python components for the pypi-pynacl package.
 %package python3
 Summary: python3 components for the pypi-pynacl package.
 Group: Default
+Requires: pypi-pynacl-filemap = %{version}-%{release}
 Requires: python3-core
 Provides: pypi(pynacl)
 Requires: pypi(cffi)
@@ -63,13 +84,16 @@ python3 components for the pypi-pynacl package.
 %prep
 %setup -q -n PyNaCl-1.5.0
 cd %{_builddir}/PyNaCl-1.5.0
+pushd ..
+cp -a PyNaCl-1.5.0 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1641941425
+export SOURCE_DATE_EPOCH=1656383585
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$FFLAGS -fno-lto "
@@ -77,23 +101,51 @@ export FFLAGS="$FFLAGS -fno-lto "
 export CXXFLAGS="$CXXFLAGS -fno-lto "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 -m build --wheel --skip-dependency-check --no-isolation
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 -msse2avx"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 -msse2avx "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
+python3 -m build --wheel --skip-dependency-check --no-isolation
+
+popd
 
 %install
 export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/pypi-pynacl
 cp %{_builddir}/PyNaCl-1.5.0/LICENSE %{buildroot}/usr/share/package-licenses/pypi-pynacl/43a3a49bd7af636c923a5ae475395b8e29320529
+cp %{_builddir}/PyNaCl-1.5.0/src/libsodium/LICENSE %{buildroot}/usr/share/package-licenses/pypi-pynacl/e500a45a573b801b971469823b31b9cfa3e21c4b
 pip install --root=%{buildroot} --no-deps --ignore-installed dist/*.whl
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
 echo ----[ mark ]----
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
+pip install --root=%{buildroot}-v3 --no-deps --ignore-installed dist/*.whl
+popd
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
 
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-pypi-pynacl
+
+%files lib
+%defattr(-,root,root,-)
+/usr/share/clear/optimized-elf/other*
+
 %files license
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/pypi-pynacl/43a3a49bd7af636c923a5ae475395b8e29320529
+/usr/share/package-licenses/pypi-pynacl/e500a45a573b801b971469823b31b9cfa3e21c4b
 
 %files python
 %defattr(-,root,root,-)
