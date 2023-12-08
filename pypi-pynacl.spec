@@ -9,7 +9,7 @@
 #
 Name     : pypi-pynacl
 Version  : 1.5.0
-Release  : 56
+Release  : 57
 URL      : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz
 Source1  : https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz.asc
@@ -59,6 +59,8 @@ python components for the pypi-pynacl package.
 Summary: python3 components for the pypi-pynacl package.
 Group: Default
 Requires: python3-core
+Provides: pypi(pynacl)
+Requires: pypi(cffi)
 
 %description python3
 python3 components for the pypi-pynacl package.
